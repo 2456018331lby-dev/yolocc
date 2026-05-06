@@ -2,17 +2,17 @@
 
 > 最后更新：2026-05-03
 
-## 1. 项目一句话说明
+### 1. 项目一句话说明
 
-`yolocc` 是一个基于 YOLOv8 的四分类垃圾目标检测项目，覆盖「数据集准备 → 训练 → 验证 → 导出 → 推理 → API 服务 → 网页演示 → Docker 部署」完整流程。
+`yolocc` 是一个基于 YOLOv8 的可复用检测工程模板。当前默认任务是 4 类垃圾检测，但仓库结构已经整理成可直接迁移到其他桌面/家庭物体检测任务的通用工程。
 
-项目已经跑通完整闭环：真实数据下载 → auto-label → GPU 训练 → 评估 → 导出 ONNX → CLI/API 推理验证。不是 demo 骨架，是可以直接用的真实模型。
+项目已跑通完整闭环：真实数据下载 → auto-label → GPU 训练 → 评估 → 导出 ONNX → CLI/API 推理验证。不是 demo 骨架，是能继续迭代的真实工程。
 
 ## 2. 当前真实状态（2026-05-03）
 
 ### 数据集
 
-当前训练配置直接使用 `data/real`（见 `configs/garbage.yaml`）。
+当前训练配置主线已切到 `configs/template_object.yaml`。`configs/garbage.yaml` 仅作为旧 4 类垃圾示例任务保留。
 为了兼容旧脚本，`data/dataset` 仍保留为 symlink → `data/real`，但 Windows 下不要依赖这个链接，直接用 `data/real` 更稳。
 
 | Split | Images | Labels | Boxes |
@@ -52,12 +52,12 @@
 
 | 文件 | 大小 | 说明 |
 |------|------|------|
-| `weights/best.pt` | 6.0 MB | 真实模型 PyTorch（30ep, RTX 4060）|
-| `weights/best.onnx` | 12 MB | 真实模型 ONNX 640px |
-| `weights/real_best.pt` | 6.0 MB | 同上原始文件 |
-| `weights/real_best.onnx` | 12 MB | 同上原始文件 |
-| `weights/smoke_best.pt` | 5.9 MB | smoke 模型（合成数据, 1ep CPU）|
-| `weights/smoke_best.onnx` | 12 MB | smoke ONNX 320px |
+- `weights/best.pt` | 6.0 MB | 真实模型 PyTorch（30ep, RTX 4060）|
+- `weights/best.onnx` | 12 MB | 真实模型 ONNX 640px |
+- `weights/real_best.pt` | 6.0 MB | 同上原始文件 |
+- `weights/real_best.onnx` | 12 MB | 同上原始文件 |
+- `weights/smoke_best.pt` | 5.9 MB | smoke 模型（合成数据, 1ep CPU）|
+- `weights/smoke_best.onnx` | 12 MB | smoke ONNX 320px |
 
 **默认使用 `weights/best.pt` / `weights/best.onnx`**（真实模型）。
 
@@ -101,7 +101,7 @@ python -m pytest tests -q
 
 当前项目不在独立 git 仓库里。外层 `/mnt/c/Users/24560`（Windows `C:\Users\24560`）被初始化为 git 仓库且无提交。**不要执行 `git add -A`**，否则会把整个用户目录加进去。
 
-如果要提交，先在 yolocc 目录单独 `git init`。
+如果要提交，已经在 `yolocc/` 目录单独初始化了仓库。
 
 ## 3. 目录结构
 
@@ -110,7 +110,8 @@ yolocc/
 ├── .github/workflows/ci.yml    GitHub Actions CI（lint + test, Python 3.10/3.11/3.12）
 ├── .gitignore                   排除 __pycache__、*.pt、*.onnx、results/runs/ 等
 ├── configs/
-│   ├── garbage.yaml             数据集配置：路径、4 类名称、颜色
+│   ├── garbage.yaml             旧 4 类垃圾示例任务配置
+│   ├── template_object.yaml     新版 6 类桌面/家庭检测模板配置
 │   └── train_cfg.yaml           训练超参：model、epoch、batch、augmentation
 ├── data/
 │   ├── dataset → data/real      symlink，当前指向真实数据
@@ -361,23 +362,38 @@ data/dataset/
 - 真实数据 + 真实训练 + 评估 + 导出 + CLI/API 推理全部通过
 - 测试 71 passed
 
-### P1：提高模型精度（当前最优先）
+### P1：下一版定位（建议）
 
-- auto-label 的 bbox 不精确，手动标注可以大幅提升 mAP
-- hazardous (mAP50=0.345) 和 kitchen (mAP50=0.190) 数据太少
-- `yolov8s` 对比训练已经证明：更大模型在当前数据上 **没有收益**，说明瓶颈主要是数据质量而不是模型容量
-- 建议：用 LabelImg/CVAT 手动标注 200-500 张精标数据，优先补充 hazardous 和 kitchen
-- 只有在手工修标注和补数据之后，才值得再尝试 `yolov8s` / `yolov8m`
+当前 4 类垃圾检测适合作为工程样板，但不适合作为“复杂场景高可靠识别”的最终版本。下一版建议切到更通用、也更贴近真实使用的任务定义：
 
-### P2：代码质量
+- **推荐定位**：桌面/家庭物体检测模板
+- **默认场景**：桌面杂物、日常物品、收纳辅助、危险物识别
+- **保留能力**：训练 / 验证 / 导出 / API / Web / Docker / benchmark / tests
+- **保留模型**：现有垃圾模型作为示例 checkpoint，不作为最终目标
+
+为什么这样改：
+1. 垃圾 4 类本身过于粗糙，复杂场景下很容易误检/漏检
+2. auto-label 噪声大，继续堆训练轮数收益有限
+3. 通用桌面/家庭场景更容易扩展类别，也更符合实际使用
+4. 工程模板可以长期复用，后续换数据集就能继续迭代
+
+### P2：下一步数据策略
+
+- 先收集 100~300 张真实桌面/家庭场景图
+- 只定义少量高价值类别（建议 5~8 个）
+- 优先做手工精标，别再依赖 auto-label 作为主数据
+- 保留现有训练脚本，但把默认数据集切成新任务
+- 第一版 6 类草案与标注规范见 `DATA_GUIDE.md`
+
+### P3：代码质量
 
 - 补 Docker build 验证测试
 - 可继续扩展 API schema（health/info 也用 response_model）
 - OpenCV DNN 与 ONNX Runtime 做 benchmark 对比，并在 CLI 中增加 auto backend 策略
 
-### P3：仓库整理
+### P4：仓库整理
 
-- 把 yolocc 目录初始化为独立 git 仓库
+- 已经把 yolocc 目录初始化为独立 git 仓库
 - 清理 data/.cache（下载缓存）
 - 考虑用 Git LFS 管理大权重文件
 

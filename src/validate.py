@@ -22,7 +22,7 @@ log = get_logger("validate")
 
 def run_validation(
     weights: str,
-    data: str = "configs/garbage.yaml",
+    data: str = "configs/template_object.yaml",
     imgsz: int = 640,
     batch: int = 16,
     device: str = "0",

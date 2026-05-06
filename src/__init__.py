@@ -2,7 +2,7 @@
 YOLO Garbage Classification Detection System
 =============================================
 
-Industrial-grade object detection for garbage classification using YOLOv8.
+Industrial-grade object detection template built on YOLOv8.
 
 Modules:
     config       — Pydantic-validated configuration

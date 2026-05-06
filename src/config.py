@@ -58,7 +58,7 @@ class AugmentationConfig(BaseModel):
 class TrainingConfig(BaseModel):
     """Training configuration."""
     model: str = Field("yolov8n.pt", description="Base model path or name")
-    data: str = Field("configs/garbage.yaml", description="Dataset config path")
+    data: str = Field("configs/template_object.yaml", description="Dataset config path")
     epochs: int = Field(100, ge=1, le=10000, description="Total training epochs")
     imgsz: int = Field(640, ge=32, le=2048, description="Input image size")
     batch: int = Field(16, ge=1, le=512, description="Batch size")
@@ -81,7 +81,7 @@ class TrainingConfig(BaseModel):
     close_mosaic: int = Field(10, ge=0, description="Disable mosaic last N epochs")
     resume: bool = Field(False, description="Resume from last checkpoint")
     project: str = Field("results/runs/train", description="Project output dir")
-    name: str = Field("garbage_detect", description="Experiment name")
+    name: str = Field("object_detect", description="Experiment name")
     pretrained: Optional[str] = Field(None, description="Pretrained weights path")
     exist_ok: bool = Field(True, description="Overwrite existing experiment")
     augmentation: AugmentationConfig = Field(default_factory=AugmentationConfig)
@@ -101,7 +101,7 @@ class ExportConfig(BaseModel):
     format: ExportFormat = Field(ExportFormat.ONNX, description="Export format")
     imgsz: int = Field(640, ge=32, le=2048, description="Export image size")
     int8: bool = Field(False, description="INT8 quantization")
-    data: str = Field("configs/garbage.yaml", description="Dataset for INT8 calibration")
+    data: str = Field("configs/template_object.yaml", description="Dataset for INT8 calibration")
     simplify: bool = Field(True, description="Simplify ONNX graph")
     opset: int = Field(11, ge=9, le=20, description="ONNX opset version")
     device: str = Field("cpu", description="Export device")
@@ -188,7 +188,7 @@ def load_yaml(path: Union[str, Path], encoding: str = "utf-8") -> dict:
         return yaml.safe_load(f) or {}
 
 
-def load_dataset_config(path: Union[str, Path] = "configs/garbage.yaml") -> DatasetConfig:
+def load_dataset_config(path: Union[str, Path] = "configs/template_object.yaml") -> DatasetConfig:
     """Load and validate dataset config from YAML."""
     raw = load_yaml(PROJECT_ROOT / path)
     return DatasetConfig(**raw)
@@ -205,13 +205,13 @@ def load_training_config(path: Union[str, Path] = "configs/train_cfg.yaml") -> T
     return TrainingConfig(**raw)
 
 
-def get_class_names(data_config: Union[str, Path] = "configs/garbage.yaml") -> Dict[int, str]:
+def get_class_names(data_config: Union[str, Path] = "configs/template_object.yaml") -> Dict[int, str]:
     """Get class names dict from dataset config."""
     cfg = load_dataset_config(data_config)
     return cfg.names
 
 
-def get_class_colors(data_config: Union[str, Path] = "configs/garbage.yaml") -> Dict[int, tuple]:
+def get_class_colors(data_config: Union[str, Path] = "configs/template_object.yaml") -> Dict[int, tuple]:
     """Get class colors dict from dataset config (as BGR tuples)."""
     cfg = load_dataset_config(data_config)
     return {k: tuple(v) for k, v in cfg.colors.items()}

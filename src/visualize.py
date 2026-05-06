@@ -1,7 +1,7 @@
 """
 Visualization utilities - Training curves, confusion matrix, PR curves
 Usage:
-    python -m src.visualize --type training --dir results/runs/train/garbage_detect
+    python -m src.visualize --type training --dir results/runs/train/object_detect
     python -m src.visualize --type compare --json results/benchmark_results.json
 """
 
@@ -187,7 +187,7 @@ def main():
 
     if args.type == "training":
         if not args.dir:
-            args.dir = "results/runs/train/garbage_detect"
+            args.dir = "results/runs/train/object_detect"
         plot_training_curves(args.dir, args.save)
 
     elif args.type == "benchmark":

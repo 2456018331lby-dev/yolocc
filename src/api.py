@@ -74,9 +74,9 @@ def create_app(
     from src.inference import YOLODetector
 
     app = FastAPI(
-        title="YOLO Garbage Detection API",
+        title="YOLO Object Detection API",
         version="2.0.0",
-        description="Real-time garbage classification using YOLOv8",
+        description="Real-time object detection using YOLOv8",
     )
 
     # CORS

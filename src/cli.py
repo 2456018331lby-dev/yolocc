@@ -23,7 +23,7 @@ console = Console(stderr=True)
 @click.group()
 @click.version_option(version="2.0.0", prog_name="yolocc")
 def main():
-    """YOLO Garbage Classification Detection Toolkit."""
+    """YOLO object detection toolkit."""
     pass
 
 
@@ -39,9 +39,9 @@ def main():
 @click.option("--device", default=None, help="Override device")
 @click.option("--resume", is_flag=True, help="Resume training")
 @click.option("--project", default="results/runs/train", help="Output project dir")
-@click.option("--name", default="garbage_detect", help="Experiment name")
+@click.option("--name", default="object_detect", help="Experiment name")
 def train(cfg, model, data, epochs, batch, imgsz, device, resume, project, name):
-    """Train YOLOv8 model for garbage classification."""
+    """Train YOLOv8 model for object detection."""
     from src.train import run_training
     from src.logger import add_file_handler, get_logger
 
@@ -79,7 +79,7 @@ def train(cfg, model, data, epochs, batch, imgsz, device, resume, project, name)
 
 @main.command()
 @click.option("--weights", required=True, help="Model weights path")
-@click.option("--data", default="configs/garbage.yaml", help="Dataset config")
+@click.option("--data", default="configs/template_object.yaml", help="Dataset config")
 @click.option("--imgsz", default=640, type=int, help="Image size")
 @click.option("--batch", default=16, type=int, help="Batch size")
 @click.option("--device", default="0", help="Device")
@@ -112,7 +112,7 @@ def validate(weights, data, imgsz, batch, device, split, conf, iou, save_json, p
               help="Export format")
 @click.option("--imgsz", default=640, type=int, help="Image size")
 @click.option("--int8", "int8_flag", is_flag=True, help="INT8 quantization")
-@click.option("--data", default="configs/garbage.yaml", help="Dataset for INT8 calibration")
+@click.option("--data", default="configs/template_object.yaml", help="Dataset for INT8 calibration")
 @click.option("--simplify", is_flag=True, default=True, help="Simplify ONNX")
 @click.option("--opset", default=11, type=int, help="ONNX opset version")
 def export(weights, fmt, imgsz, int8_flag, data, simplify, opset):
@@ -261,7 +261,7 @@ def viz():
 
 
 @viz.command("training")
-@click.option("--dir", default="results/runs/train/garbage_detect", help="Run directory")
+@click.option("--dir", default="results/runs/train/object_detect", help="Run directory")
 def viz_training(dir):
     """Plot training curves."""
     from src.visualize import plot_training_curves

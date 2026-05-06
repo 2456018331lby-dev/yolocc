@@ -75,7 +75,7 @@ def run_export(
     fmt: str = "onnx",
     imgsz: int = 640,
     int8: bool = False,
-    data: str = "configs/garbage.yaml",
+    data: str = "configs/template_object.yaml",
     simplify: bool = True,
     opset: int = 11,
     device: str = "cpu",
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     parser.add_argument("--format", default="onnx", choices=list(FORMAT_EXT.keys()) + ["all"])
     parser.add_argument("--imgsz", type=int, default=640)
     parser.add_argument("--int8", action="store_true")
-    parser.add_argument("--data", default="configs/garbage.yaml")
+    parser.add_argument("--data", default="configs/template_object.yaml")
     parser.add_argument("--simplify", action="store_true", default=True)
     parser.add_argument("--opset", type=int, default=11)
     parser.add_argument("--device", default="cpu")

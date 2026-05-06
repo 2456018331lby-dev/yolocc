@@ -45,6 +45,17 @@ class TestConfigs:
         assert "colors" in cfg
         assert len(cfg["colors"]) == 4
 
+    def test_template_object_yaml_valid(self):
+        import yaml
+        cfg_path = Path(__file__).parent.parent / "configs" / "template_object.yaml"
+        with open(cfg_path, encoding="utf-8") as f:
+            cfg = yaml.safe_load(f)
+
+        assert "names" in cfg
+        assert len(cfg["names"]) == 6
+        assert cfg["names"][0] == "container"
+        assert cfg["names"][5] == "misc"
+
     def test_pyproject_valid(self):
         pyproject = Path(__file__).parent.parent / "pyproject.toml"
         if not pyproject.exists():

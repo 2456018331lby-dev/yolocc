@@ -1,33 +1,33 @@
-# YOLO Garbage Classification Detection System
+# YOLOv8 容器杂物检测工程
 
-YOLOv8-based four-class garbage object detection pipeline.
+这是一个可复用的 YOLOv8 检测工程模板：包含数据准备、训练、验证、导出、推理、API、网页演示、Docker、测试与维护文档。
 
-Current status: this repository is a runnable YOLOv8 garbage detection pipeline with both engineering completeness and a usable real-data model. It includes a production-default real model trained on Stanford TrashNet (2,527 images, auto-labeled to 4 garbage classes), dual ONNX backends (OpenCV DNN + ONNX Runtime), FastAPI/Streamlit interfaces, and a tested end-to-end workflow. The current production model (`weights/best.pt` / `weights/best.onnx`) achieves test mAP50=0.436 and recyclable mAP50=0.831. See `weights/model_card.md` for model comparison and full metrics.
+当前仓库默认模型是基于 Stanford TrashNet 真实数据训练的 4 类垃圾检测器，但工程结构本身可复用到新的检测任务。
 
-For future maintainers and AI agents, read `MAINTENANCE.md` first.
+维护入口：`MAINTENANCE.md`
+模型详情：`weights/model_card.md`
 
-## Features
+## 快速开始
 
-Implemented now:
+```bash
+python -m pip install -e ".[all]"
+python -m pytest tests -q
+python -m src.cli --help
+```
 
-- **Full pipeline tooling**: data preparation → training → evaluation → export → deployment
-- **Pydantic config**: validated YAML configuration with type safety
-- **Rich logging**: structured logging with rich formatting and file output
-- **CLI toolkit**: `yolocc` command with subcommands for common operations
-- **Backends**: PyTorch/Ultralytics `.pt`, OpenCV DNN `.onnx`, and ONNX Runtime `.onnx` inference
-- **Auto backend policy**: `.onnx` defaults to ONNX Runtime when available, otherwise falls back to OpenCV DNN; manual override via `--backend`
-- **Export helpers**: ONNX/TorchScript/OpenVINO/TFLite/NCNN export via Ultralytics
-- **REST API**: FastAPI server with auto-docs, batch inference, health checks
-- **Streamlit demo**: interactive web UI with image upload and camera
-- **Docker support**: API and training stages
-- **GitHub Actions CI**: lint + test on Python 3.10/3.11/3.12
-- **Tests**: config, export metadata, inference postprocess, CLI smoke, dataset generation/validation, API TestClient
+## 当前能力
 
-Planned / not yet fully verified:
+- `.pt` / `.onnx` 推理
+- `.onnx` 自动优先 ONNX Runtime，失败回退 OpenCV DNN
+- CLI / API / Streamlit / Docker
+- 全量测试通过
 
-- NCNN C++ deployment files
-- Hard-case manual annotation loop for hazardous/kitchen improvement
-- Auto backend selection policy (OpenCV DNN vs ONNX Runtime) based on environment/latency benchmarking
+## 推荐阅读顺序
+
+1. `MAINTENANCE.md`
+2. `DATA_GUIDE.md`
+3. `weights/model_card.md`
+4. `README.md`（本文件）
 
 ## Project Structure
 
@@ -47,7 +47,8 @@ yolocc/
 │   ├── api.py                  # FastAPI REST server
 │   └── visualize.py            # Matplotlib plotting
 ├── configs/                    # Configuration files
-│   ├── garbage.yaml            # Dataset config (4 classes)
+│   ├── garbage.yaml            # Current 4-class example dataset config
+│   ├── template_object.yaml    # New 6-class generic template config
 │   └── train_cfg.yaml          # Training hyperparameters
 ├── deploy/                     # Deployment files
 │   ├── app.py                  # Streamlit web demo
@@ -98,23 +99,23 @@ make data-validate
 
 ```bash
 # Training
-# Outputs to results/runs/train/garbage_detect/weights/best.pt by default
-yolocc train --cfg configs/train_cfg.yaml
+# Default template path is now the generic object template
+yolocc train --cfg configs/train_cfg.yaml --data configs/template_object.yaml --name object_detect_v1
 
 # Fast CPU smoke training
-yolocc train --cfg configs/train_cfg.yaml --epochs 1 --batch 2 --device cpu
+yolocc train --cfg configs/train_cfg.yaml --data configs/template_object.yaml --epochs 1 --batch 2 --device cpu
 
 # Validation
-yolocc validate --weights results/runs/train/garbage_detect/weights/best.pt --data configs/garbage.yaml --device cpu
+yolocc validate --weights results/runs/train/object_detect_v1/weights/best.pt --data configs/template_object.yaml --device cpu
 
 # Export ONNX
-yolocc export --weights results/runs/train/garbage_detect/weights/best.pt --format onnx
+yolocc export --weights results/runs/train/object_detect_v1/weights/best.pt --format onnx --data configs/template_object.yaml
 
 # Detection with exported ONNX
 yolocc detect --source data/dataset/images/test/0000.jpg --weights weights/best.onnx --save results/detect_0000.jpg --no-show
 
 # Benchmark
-yolocc benchmark --weights results/runs/train/garbage_detect/weights/best.pt --weights weights/best.onnx
+yolocc benchmark --weights results/runs/train/object_detect_v1/weights/best.pt --weights weights/best.onnx
 
 # REST API
 yolocc serve --weights weights/best.onnx --port 8000
@@ -179,7 +180,7 @@ All configs use Pydantic validation. Edit `configs/train_cfg.yaml`:
 
 ```yaml
 model: yolov8n.pt
-data: configs/garbage.yaml
+data: configs/template_object.yaml
 epochs: 100
 imgsz: 640
 batch: 16
@@ -223,7 +224,7 @@ python scripts/download_real_dataset.py --source trashnet --output data/real --a
 python scripts/prepare_dataset.py validate --data-dir data/real
 
 # Train on real data
-yolocc train --cfg configs/train_cfg.yaml --data configs/garbage.yaml --epochs 100 --device 0
+yolocc train --cfg configs/train_cfg.yaml --data configs/template_object.yaml --epochs 100 --device 0
 ```
 
 Class mapping (TrashNet → yolocc):

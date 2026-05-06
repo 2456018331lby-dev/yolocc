@@ -441,7 +441,7 @@ class YOLODetector:
                     writer.write(annotated)
 
                 if show:
-                    cv2.imshow("YOLO Garbage Detection", annotated)
+                    cv2.imshow("YOLO Object Detection", annotated)
                     key = cv2.waitKey(1)
                     if key in (ord("q"), 27):
                         break

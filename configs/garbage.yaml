@@ -1,5 +1,5 @@
-# YOLOv8 Garbage Classification Dataset Config
-# 4 classes: recyclable, hazardous, kitchen, other
+# YOLOv8 Garbage Example Dataset Config
+# Legacy example task preserved for the original 4-class garbage model
 
 path: ./data/real
 train: images/train

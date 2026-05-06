@@ -92,6 +92,12 @@ class TestYAMLConfigs:
         assert len(cfg.names) == 4
         assert cfg.names[0] == "recyclable"
 
+    def test_template_object_yaml_loads(self):
+        cfg = load_dataset_config("configs/template_object.yaml")
+        assert len(cfg.names) == 6
+        assert cfg.names[0] == "container"
+        assert cfg.names[3] == "hazard"
+
     def test_train_cfg_loads(self):
         cfg = load_training_config("configs/train_cfg.yaml")
         assert cfg.epochs > 0

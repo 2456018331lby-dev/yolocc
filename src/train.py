@@ -26,7 +26,7 @@ def run_training(
     overrides: Optional[Dict[str, Any]] = None,
     resume: bool = False,
     project: str = "results/runs/train",
-    name: str = "garbage_detect",
+    name: str = "object_detect",
 ) -> str:
     """
     Execute the full training pipeline.
@@ -156,7 +156,7 @@ if __name__ == "__main__":
     parser.add_argument("--device", default=None)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--project", default="results/runs/train")
-    parser.add_argument("--name", default="garbage_detect")
+    parser.add_argument("--name", default="object_detect")
     args = parser.parse_args()
 
     overrides = {}

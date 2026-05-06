@@ -1,0 +1,25 @@
+# YOLOv8 Desktop/Home Object Detection Template
+# Generic 6-class starter config for future data collection
+
+path: ./data/template
+train: images/train
+val: images/val
+test: images/test
+
+# Class names
+names:
+  0: container      # bottles, cups, cans
+  1: trash          # wrappers, tissues, scraps
+  2: electronics    # cables, chargers, remotes
+  3: hazard         # scissors, knives, lighters
+  4: paper          # books, notebooks, paper
+  5: misc           # other common desk/home objects
+
+# Class colors (BGR for OpenCV visualization)
+colors:
+  0: [0, 200, 0]     # green - container
+  1: [0, 0, 200]     # red - trash
+  2: [200, 0, 200]   # purple - electronics
+  3: [0, 128, 255]   # orange - hazard
+  4: [255, 200, 0]   # cyan - paper
+  5: [128, 128, 128] # gray - misc

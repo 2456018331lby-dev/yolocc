@@ -24,7 +24,7 @@ log = get_logger("pipeline")
 PROJECT_ROOT = Path(__file__).parent.parent
 
 # Default experiment paths — matches train_cfg.yaml project/name
-DEFAULT_EXPERIMENT = "results/runs/train/garbage_detect"
+DEFAULT_EXPERIMENT = "results/runs/train/object_detect"
 BEST_PT = f"{DEFAULT_EXPERIMENT}/weights/best.pt"
 BEST_ONNX = f"{DEFAULT_EXPERIMENT}/weights/best.onnx"
 
