@@ -98,6 +98,12 @@ class TestYAMLConfigs:
         assert cfg.names[0] == "container"
         assert cfg.names[3] == "hazard"
 
+    def test_household37_future_yaml_loads(self):
+        cfg = load_dataset_config("configs/household37_future.yaml")
+        assert len(cfg.names) == 37
+        assert cfg.names[17] == "cup"
+        assert cfg.names[35] == "computer"
+
     def test_train_cfg_loads(self):
         cfg = load_training_config("configs/train_cfg.yaml")
         assert cfg.epochs > 0
