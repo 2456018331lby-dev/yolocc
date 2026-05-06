@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+.conda/
+
+# IDE
+.vscode/
+.idea/
+
+# Pytest
+.pytest_cache/
+
+# Ruff / mypy
+.ruff_cache/
+.mypy_cache/
+
+# Training output (too large for git)
+results/runs/
+*.pt
+*.onnx
+*.torchscript
+*.tflite
+*.openvino/
+
+# Root-level pretrained weights
+/yolov8n.pt
+/yolov8s.pt
+/yolov8m.pt
+/yolov8l.pt
+/yolov8x.pt
+/yolo26n.pt
+
+# Keep model card
+!weights/model_card.md
+!weights/README.md
+
+# Dataset caches
+data/dataset/**/*.cache
+
+# Demo outputs
+results/demo_*
+results/smoke_*
+
+# OS
+.DS_Store
+Thumbs.db

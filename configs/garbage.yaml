@@ -1,0 +1,21 @@
+# YOLOv8 Garbage Classification Dataset Config
+# 4 classes: recyclable, hazardous, kitchen, other
+
+path: ./data/real
+train: images/train
+val: images/val
+test: images/test
+
+# Class names
+names:
+  0: recyclable      # 可回收物
+  1: hazardous       # 有害垃圾
+  2: kitchen          # 厨余垃圾
+  3: other            # 其他垃圾
+
+# Class colors (BGR for OpenCV visualization)
+colors:
+  0: [0, 255, 0]     # green - recyclable
+  1: [0, 0, 255]     # red - hazardous
+  2: [255, 0, 0]     # blue - kitchen
+  3: [128, 128, 128]  # gray - other

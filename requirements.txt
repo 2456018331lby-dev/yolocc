@@ -1,0 +1,44 @@
+# YOLO Garbage Detection - Dependencies
+# Keep this file in sync with pyproject.toml and docker/Dockerfile.
+
+# Core ML / YOLO
+ultralytics>=8.1.0
+torch>=2.0.0
+torchvision>=0.15.0
+
+# OpenCV: use one package only. opencv-python works for local demo;
+# switch to opencv-python-headless in Docker/headless deployments if needed.
+opencv-python>=4.8.0
+
+# ONNX export & inference
+onnx>=1.15.0
+onnxruntime>=1.16.0
+onnxsim>=0.4.33
+
+# Data processing
+numpy>=1.24.0
+Pillow>=10.0.0
+pyyaml>=6.0
+
+# CLI / config / logging
+click>=8.0.0
+rich>=13.0.0
+pydantic>=2.0.0
+requests>=2.28.0
+
+# Visualization & monitoring
+matplotlib>=3.7.0
+seaborn>=0.12.0
+tqdm>=4.65.0
+psutil>=5.9.0
+
+# API
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Demo UI
+streamlit>=1.28.0
+
+# Labeling (optional)
+# labelimg

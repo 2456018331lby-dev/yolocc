@@ -1,0 +1,38 @@
+# Training hyperparameters
+model: yolov8n.pt        # Base model (nano for edge)
+data: configs/garbage.yaml
+epochs: 100
+imgsz: 640
+batch: 16
+device: 0                # GPU id, 'cpu' for CPU-only
+workers: 8
+patience: 20             # Early stopping patience
+optimizer: auto          # SGD, Adam, AdamW, auto
+lr0: 0.01                # Initial learning rate
+lrf: 0.01                # Final learning rate factor
+momentum: 0.937
+weight_decay: 0.0005
+warmup_epochs: 3.0
+warmup_momentum: 0.8
+warmup_bias_lr: 0.1
+close_mosaic: 10         # Disable mosaic augmentation last N epochs
+
+# Augmentation
+hsv_h: 0.015             # Hue augmentation
+hsv_s: 0.7               # Saturation augmentation
+hsv_v: 0.4               # Value augmentation
+degrees: 0.0             # Rotation degrees
+translate: 0.1           # Translation
+scale: 0.5               # Scale gain
+shear: 0.0               # Shear
+perspective: 0.0         # Perspective
+flipud: 0.0              # Vertical flip probability
+fliplr: 0.5              # Horizontal flip probability
+mosaic: 1.0              # Mosaic augmentation probability
+mixup: 0.0               # MixUp augmentation probability
+copy_paste: 0.0          # Segment copy-paste probability
+
+# Export
+export_format: onnx      # onnx, torchscript, tflite, etc.
+export_imgsz: 640
+int8_quantize: true

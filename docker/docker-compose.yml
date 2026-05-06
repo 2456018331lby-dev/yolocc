@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  # API inference server
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../weights:/app/weights
+      - ../configs:/app/configs
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
+  # Streamlit demo
+  demo:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ../weights:/app/weights
+      - ../configs:/app/configs
+      - ../results:/app/results
+    command: ["streamlit", "run", "deploy/app.py", "--server.headless", "true", "--server.port", "8501"]
+    restart: unless-stopped
+
+  # Training (run on demand)
+  train:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: train
+    volumes:
+      - ../data:/app/data
+      - ../results:/app/results
+      - ../configs:/app/configs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    profiles:
+      - training
